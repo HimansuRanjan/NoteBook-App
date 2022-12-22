@@ -4,6 +4,8 @@ const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const fetchuser = require('../middleware/fetchuser');
+
 
 // Json web token secret to sign a token
 const JWT_secreat = "Himansusiadoogyob";
@@ -54,7 +56,63 @@ router.post('/createuser', [
         console.error(err.message);
         res.status(500).send("Some Error Occured!!!");
     }
-    
 })
+
+// Authenticate an user using : POST "/api/auth/login". No login required  
+router.post('/login', [ 
+    body("email", "Enter a Valid Email!").isEmail(),
+    body('password', `Password can't be blank`).exists(),
+], async (req, res)=>{
+
+    // If there are errors return bad request and errors
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({errors: errors.array()});
+    }
+
+    const {email, password} = req.body;
+
+    try{
+        let user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({error: "Try to login with correct cridentials"});
+        }
+
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if(!passwordCompare){
+            return res.status(400).json({error: "Try to login with correct cridentials"});
+        }
+
+        const data = {
+            user:{
+                id: user.id
+            }
+        }
+
+        //signing token using JWT_Secreat
+        const authtoken = jwt.sign(data, JWT_secreat);
+
+        res.json(authtoken);
+        
+    }catch(err){
+        console.error(err.message);
+        res.status(500).send("Some Error Occured!!!");
+    }
+});
+
+
+// Get Loggedin User Details using : GET "/api/auth/getuser" - Login required
+router.post('/getuser',fetchuser, async (req, res)=>{
+
+    try {
+        userId = req.user.id;
+        const user = await User.findById(userId).select("-password");
+        res.send(user)
+    } catch (err) {
+        console.error(err.message);
+            res.status(500).send("Some Error Occured!!!");
+    }
+})
+
 
 module.exports = router;
