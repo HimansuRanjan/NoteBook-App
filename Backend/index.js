@@ -11,6 +11,6 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
 
-app.listen(3000, ()=>{
-    console.log(`App running at http://localhost:3000`);
+app.listen(5000, ()=>{
+    console.log(`App running at http://localhost:5000`);
 })
