@@ -5,9 +5,11 @@ connectToMongo();
 
 const app = express();
 
-app.get('/', (req, res)=>{
-    res.send("Hello World");
-})
+app.use(express.json());
+
+//Available Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/notes', require('./routes/notes'));
 
 app.listen(3000, ()=>{
     console.log(`App running at http://localhost:3000`);
