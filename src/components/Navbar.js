@@ -5,7 +5,7 @@ const Navbar = () => {
   let location = useLocation();
   useEffect(()=>{
     // eslint-disable-next-line
-  }, location);
+  }, [location]);
 
   return (
     <div>
