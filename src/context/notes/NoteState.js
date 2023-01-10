@@ -33,36 +33,27 @@ const NoteState = (props)=>{
           },
           body: JSON.stringify({title, description, tag})
         });
-        //const json =  response.json();
-
-        console.log("Adding a new Note")
-        const note = {
-          "_id": "63a4a2c5996d2d917a7582b6",
-          "user": "63a47428f8b3d94309c0c6f7",
-          "title": title,
-          "description": description,
-          "tag": tag,
-          "date": "2022-12-22T18:32:37.153Z",
-          "__v": 0
-        };
+        const note = await response.json();
         setNotes(notes.concat(note))
+        
+        
       }
 
       //Delete a Note
       // TODO: API Call
       const deleteNote = async (id)=>{
+       // TODO: API Call
+        const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'content-type': 'application/json',
+            'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhNDc0MjhmOGIzZDk0MzA5YzBjNmY3In0sImlhdCI6MTY3MTgxODI3MH0.y17yQqCCx-SPjthOt0Pbu0xBx0iYsCKhFnl5Xhxmjwc'
+          }
+        });
+        const json = await response.json();
+        console.log(json);
 
-        // TODO: API Call
-        // const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
-        //   method: 'POST',
-        //   headers: {
-        //     'content-type': 'application/json',
-        //     'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhNDc0MjhmOGIzZDk0MzA5YzBjNmY3In0sImlhdCI6MTY3MTgxODI3MH0.y17yQqCCx-SPjthOt0Pbu0xBx0iYsCKhFnl5Xhxmjwc'
-        //   },
-        //   body: JSON.stringify(data)
-        // });
-        // const json =  response.json();
-
+        
         console.log("deleting the node with id: "+ id);
         const newNotes = notes.filter((note)=>{return note._id !== id})
         setNotes(newNotes)
@@ -72,24 +63,28 @@ const NoteState = (props)=>{
       const editNote = async (id, title, description, tag)=>{
         // TODO: API Call
         const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'content-type': 'application/json',
             'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhNDc0MjhmOGIzZDk0MzA5YzBjNmY3In0sImlhdCI6MTY3MTgxODI3MH0.y17yQqCCx-SPjthOt0Pbu0xBx0iYsCKhFnl5Xhxmjwc'
           },
           body: JSON.stringify({title, description, tag})
         });
-        const json =  response.json();
+        const json = await response.json();
+        console.log(json);
 
+        let newNotes = JSON.parse(JSON.stringify(notes));
         // Logic to edit in client 
         for(let index = 0; index<notes.length; index++){
-          const element = notes[index];
+          const element = newNotes[index];
           if(element._id === id){
-            element.title = title;
-            element.description = description;
-            element.tag = tag;  
+            newNotes[index].title = title;
+            newNotes[index].description = description;
+            newNotes[index].tag = tag;  
+            break;
           }
         }
+        setNotes(newNotes);
       }
 
 
