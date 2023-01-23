@@ -1,11 +1,19 @@
 import React, { useEffect } from 'react'
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   let location = useLocation();
+  let navigate = useNavigate();
+
   useEffect(()=>{
     // eslint-disable-next-line
   }, [location]);
+
+  const handleLogout = ()=>{
+    localStorage.removeItem('token');
+    navigate('/login');
+    
+  }
 
   return (
     <div>
@@ -25,10 +33,11 @@ const Navbar = () => {
         </li>
       </ul>
 
-      <form className="d-flex">
-        <button className="btn btn-primary" type="submit">Log in</button>
-        <button className="btn btn-primary" type="submit">Sign in</button>
-      </form>
+      {!localStorage.getItem('token') ?<form className="d-flex">
+        <Link className='btn btn-primary mx-2' to='/login' role='button'>Log in</Link> 
+        <Link className='btn btn-primary mx-2' to='/signup' role='button'>Sign Up</Link>
+      </form>:<button onClick={handleLogout} className='btn btn-primary'> Log Out</button>}
+
     </div>
   </div>
 </nav>
