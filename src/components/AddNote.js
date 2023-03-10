@@ -21,7 +21,7 @@ const AddNote = (props) => {
     <div>
       <div className='container'>
         <h1>Add a note</h1> 
-        <form>
+        <form autocomplete="off">
           <div className="mb-3">
             <label htmlFor="title" className="form-label">Title</label>
             <input type="text" className="form-control" id="title" name='title' aria-describedby="emailHelp" value={note.title} onChange={onChange} required/>
